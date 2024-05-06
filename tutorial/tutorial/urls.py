@@ -17,13 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.http import JsonResponse
 from django.urls import path, include
-from quickstart import views
+from quickstart import views as qv
+from book import views as bv
 from django.contrib.auth.models import User
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewsets)
-router.register(r'groups', views.GroupViewsets)
+router.register(r'users', qv.UserViewsets)
+router.register(r'groups', qv.GroupViewsets)
+router.register(r'books', bv.BookViewsets)
 
 
 def compare_fun(req):
@@ -46,5 +48,5 @@ urlpatterns = [
 
     path('compare/', compare_fun),
 
-    path('', include(router.urls))
+    path('', include(router.urls)),
 ]
