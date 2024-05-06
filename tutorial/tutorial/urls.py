@@ -15,8 +15,36 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.http import JsonResponse
+from django.urls import path, include
+from quickstart import views
+from django.contrib.auth.models import User
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+router.register(r'users', views.UserViewsets)
+router.register(r'groups', views.GroupViewsets)
+
+
+def compare_fun(req):
+    # pass
+    users = User.objects.all()
+
+    users = [{'name': u.username, } for u in users]
+
+    return JsonResponse({
+
+        'code': 0,
+        "msg": '获取用户列表成功',
+        'datas': users
+
+    })
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    path('compare/', compare_fun),
+
+    path('', include(router.urls))
 ]
