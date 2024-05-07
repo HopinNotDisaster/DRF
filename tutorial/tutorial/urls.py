@@ -25,7 +25,9 @@ from rest_framework import routers
 router = routers.DefaultRouter()
 router.register(r'users', qv.UserViewsets)
 router.register(r'groups', qv.GroupViewsets)
-router.register(r'books', bv.BookViewsets)
+
+
+# router.register(r'books', bv.BookViewsets)
 
 
 def compare_fun(req):
@@ -49,4 +51,10 @@ urlpatterns = [
     path('compare/', compare_fun),
 
     path('', include(router.urls)),
+
+    path('books/', bv.book_list, name='book-list'),
+    path('books/<int:id>/', bv.book_detail, name='book-detail'),
+
+    path('categorys/', bv.category_list, name='category-list'),
+    path('categorys/<int:id>/', bv.category_detail, name='category-detail'),
 ]

@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import date
 
 
 # Create your models here.
@@ -15,6 +16,17 @@ class Book(models.Model):
     title = models.CharField("书名", max_length=20, unique=True, null=False, blank=False)
 
     author = models.CharField("作者名", max_length=10, null=False, blank=False)
+
+    info = models.CharField("简介", max_length=50, null=True, blank=True)
+
+    pub_date = models.DateField("发布时间", default=date(2002, 1, 1))
+
+    def __str__(self):
+        return self.title
+
+
+class Category(models.Model):
+    title = models.CharField("分类名", max_length=20, unique=True, null=False, blank=False)
 
     info = models.CharField("简介", max_length=50, null=True, blank=True)
 
