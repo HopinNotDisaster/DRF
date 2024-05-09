@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 
 class UserSerializers(serializers.HyperlinkedModelSerializer):
     password = serializers.CharField(max_length=20, write_only=True)
+    url = serializers.HyperlinkedIdentityField(read_only=True, view_name='user-detail', lookup_field='id')
 
     class Meta:
         model = User
@@ -23,6 +24,7 @@ class UserSerializers(serializers.HyperlinkedModelSerializer):
 
 
 class GroupSerializers(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(read_only=True, view_name='group-detail', lookup_field='id')
     class Meta:
         model = Group
         fields = ['url', 'name']

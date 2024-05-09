@@ -38,6 +38,10 @@ class BookSerializers(serializers.Serializer):
     title = serializers.CharField(max_length=50)
     author = serializers.CharField(max_length=10)
     pub_date = serializers.DateField(default=date(2002, 1, 1))
+    # category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    # category = CategorySerializers()
+    category = serializers.HyperlinkedRelatedField(view_name="category-detail", queryset=Category.objects.all(),
+                                                   lookup_field="id")
 
     def create(self, validated_data):
         instance = Book.objects.create(**validated_data)

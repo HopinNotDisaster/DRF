@@ -21,6 +21,8 @@ class Book(models.Model):
 
     pub_date = models.DateField("发布时间", default=date(2002, 1, 1))
 
+    category = models.ForeignKey(to="Category", default='2', on_delete=models.CASCADE)
+
     def __str__(self):
         return self.title
 
