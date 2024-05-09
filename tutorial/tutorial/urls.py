@@ -27,11 +27,11 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.urlpatterns import format_suffix_patterns
 
-
-# router = routers.SimpleRouter()
+router = routers.SimpleRouter()
 # router.register(r'users', qv.UserViewsets)
 # router.register(r'groups', qv.GroupViewsets)
-# router.register(r'books', bv.BookViewsets)
+router.register(r'books', bv.BookViewsets)
+router.register(r'categorys', bv.CategoryViewsets)
 
 
 def compare_fun(req):
@@ -52,12 +52,10 @@ def compare_fun(req):
 @api_view(["GET"])
 def api_root(req, format=None):
     return Response({
-
         "users": reverse('user-list', request=req, format=format),
         "groups": reverse('group-list', request=req, format=format),
         "books": reverse('book-list', request=req, format=format),
         "categorys": reverse('category-list', request=req, format=format),
-
     }, status=status.HTTP_200_OK)
 
 
@@ -66,27 +64,33 @@ urlpatterns = [
 
     path('compare/', compare_fun),
 
-    # path('', include(router.urls)),
+    path('', include(router.urls)),
 
     path("", api_root, name='api-root'),
 
     re_path('^users/$', qv.UserListView.as_view(), name='user-list'),
     re_path('^users/(?P<id>[^/.]+)/$', qv.UserDetailView.as_view(), name='user-detail'),
 
-    re_path('^groups/$', qv.GroupListView.as_view(), name='group-list'),
-    re_path('^groups/(?P<id>[^/.]+)/$', qv.GroupDetailView.as_view(), name='group-detail'),
+    # re_path('^groups/$', qv.GroupListView.as_view(), name='group-list'),
+    # re_path('^groups/(?P<id>[^/.]+)/$', qv.GroupDetailView.as_view(), name='group-detail'),
+
+    re_path('^groups/$', qv.GroupListGenericView.as_view(), name='group-list'),
+    re_path('^groups/(?P<id>[^/.]+)/$', qv.GroupDetailGenericView.as_view(), name='group-detail'),
 
     # re_path('^books/$', bv.book_list, name='book-list'),
     # re_path('^books/(?P<id>[^/.]+)/$', bv.book_detail, name='book-detail'),
 
-    re_path('^books/$', bv.BookListView.as_view(), name='book-list'),
-    re_path('^books/(?P<id>[^/.]+)/$', bv.BookDetailView.as_view(), name='book-detail'),
+    # re_path('^books/$', bv.BookListView.as_view(), name='book-list'),
+    # re_path('^books/(?P<id>[^/.]+)/$', bv.BookDetailView.as_view(), name='book-detail'),
+
+    # re_path('^books/$', bv.BookListCreateAPIView.as_view(), name='book-list'),
+    # re_path('^books/(?P<id>[^/.]+)/$', bv.BookRetrieveUpdateDestroyAPIView.as_view(), name='book-detail'),
 
     # re_path('^categorys/$', bv.category_list, name='category-list'),
     # re_path('^categorys/(?P<id>[^/.]+)/$', bv.category_detail, name='category-detail'),
 
-    re_path('^categorys/$', bv.CategoryListView.as_view(), name='category-list'),
-    re_path('^categorys/(?P<id>[^/.]+)/$', bv.CategoryDetailView.as_view(), name='category-detail'),
+    # re_path('^categorys/$', bv.CategoryListView.as_view(), name='category-list'),
+    # re_path('^categorys/(?P<id>[^/.]+)/$', bv.CategoryDetailView.as_view(), name='category-detail'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

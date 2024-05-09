@@ -6,7 +6,7 @@ from rest_framework import viewsets, status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework.generics import GenericAPIView
 from .serializers import UserSerializers, GroupSerializers
 from django.contrib.auth.models import User, Group
 
@@ -85,10 +85,86 @@ class UserDetailView(APIView):
         }, status=status.HTTP_200_OK)
 
 
-class GroupListView(APIView):
+# class GroupListView(APIView):
+#     def get(self, req):
+#         groups = Group.objects.all()
+#         seria = GroupSerializers(instance=groups, many=True, context={'request': req})
+#         return Response(data={
+#             'code': 0,
+#             'msg': '获取用户组列表',
+#             "data": seria.data
+#         }, status=status.HTTP_200_OK)
+#
+#     def post(self, req):
+#         seria = GroupSerializers(data=req.POST, context={'request': req})
+#         seria.is_valid(raise_exception=True)
+#         seria.save()
+#         # return JsonResponse({
+#         #     'code': 0,
+#         #     'msg': '新增书籍',
+#         #     "data": seria.data
+#         # })
+#         return Response(data={
+#             'code': 0,
+#             'msg': '新增用户组列表',
+#             "data": seria.data
+#         }, status=status.HTTP_200_OK)
+#
+#
+# class GroupDetailView(APIView):
+#     def get(self, req, id):
+#         try:
+#             group = Group.objects.get(id=id)
+#         except:
+#             return Response({
+#             }, status=status.HTTP_404_NOT_FOUND)
+#         seria = GroupSerializers(instance=group, context={'request': req})
+#         return Response(data={
+#             'code': 0,
+#             'msg': '获取指定Group',
+#             'data': seria.data
+#         }, status=status.HTTP_200_OK)
+#
+#     def put(self, req, id):
+#         try:
+#             group = Group.objects.get(id=id)
+#         except:
+#             return Response({
+#             }, status=status.HTTP_404_NOT_FOUND)
+#         data = JSONParser().parse(req)
+#         seria = GroupSerializers(instance=group, data=data, context={'request': req})
+#         seria.is_valid(raise_exception=True)
+#         seria.save()
+#         return Response(data={
+#             'code': 0,
+#             'msg': '修改指定Group',
+#             'data': seria.data
+#         }, status=status.HTTP_200_OK)
+#
+#     def delete(self, id):
+#         try:
+#             group = Group.objects.get(id=id)
+#         except:
+#             return Response({
+#             }, status=status.HTTP_404_NOT_FOUND)
+#         group.delete()
+#         return Response(data={
+#             'code': 0,
+#             'msg': '删除指定group',
+#         }, status=status.HTTP_200_OK)
+#
+
+
+class GroupListGenericView(GenericAPIView):
+
+    def get_queryset(self):
+        return Group.objects.all()
+
+    def get_serializer_class(self):
+        return GroupSerializers
+
     def get(self, req):
-        groups = Group.objects.all()
-        seria = GroupSerializers(instance=groups, many=True, context={'request': req})
+        seria = self.get_serializer(instance=self.get_queryset(), many=True, context={'request': req})
         return Response(data={
             'code': 0,
             'msg': '获取用户组列表',
@@ -96,14 +172,9 @@ class GroupListView(APIView):
         }, status=status.HTTP_200_OK)
 
     def post(self, req):
-        seria = GroupSerializers(data=req.POST, context={'request': req})
+        seria = self.get_serializer(data=req.POST, context={'request': req})
         seria.is_valid(raise_exception=True)
         seria.save()
-        # return JsonResponse({
-        #     'code': 0,
-        #     'msg': '新增书籍',
-        #     "data": seria.data
-        # })
         return Response(data={
             'code': 0,
             'msg': '新增用户组列表',
@@ -111,14 +182,22 @@ class GroupListView(APIView):
         }, status=status.HTTP_200_OK)
 
 
-class GroupDetailView(APIView):
+class GroupDetailGenericView(GenericAPIView):
+    lookup_field = "id"
+
+    def get_queryset(self):
+        return Group.objects.all()
+
+    def get_serializer_class(self):
+        return GroupSerializers
+
     def get(self, req, id):
         try:
-            group = Group.objects.get(id=id)
+            object = self.get_object()
         except:
             return Response({
             }, status=status.HTTP_404_NOT_FOUND)
-        seria = GroupSerializers(instance=group, context={'request': req})
+        seria = self.get_serializer(instance=object, context={'request': req})
         return Response(data={
             'code': 0,
             'msg': '获取指定Group',
@@ -127,12 +206,12 @@ class GroupDetailView(APIView):
 
     def put(self, req, id):
         try:
-            group = Group.objects.get(id=id)
+            object = self.get_object()
         except:
             return Response({
             }, status=status.HTTP_404_NOT_FOUND)
         data = JSONParser().parse(req)
-        seria = GroupSerializers(instance=group, data=data, context={'request': req})
+        seria = GroupSerializers(instance=object, data=data, context={'request': req})
         seria.is_valid(raise_exception=True)
         seria.save()
         return Response(data={
@@ -143,11 +222,11 @@ class GroupDetailView(APIView):
 
     def delete(self, id):
         try:
-            group = Group.objects.get(id=id)
+            object = self.get_object()
         except:
             return Response({
             }, status=status.HTTP_404_NOT_FOUND)
-        group.delete()
+        object.delete()
         return Response(data={
             'code': 0,
             'msg': '删除指定group',

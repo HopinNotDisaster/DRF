@@ -25,6 +25,7 @@ class UserSerializers(serializers.HyperlinkedModelSerializer):
 
 class GroupSerializers(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(read_only=True, view_name='group-detail', lookup_field='id')
+
     class Meta:
         model = Group
         fields = ['url', 'name']
